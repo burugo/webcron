@@ -5,7 +5,7 @@ import (
 	libcron "github.com/lisijie/cron"
 	"github.com/lisijie/webcron/app/jobs"
 	"github.com/lisijie/webcron/app/libs"
-	"github.com/lisijie/webcron/app/models"
+	"lisijie/webcron/app/models"
 	"strconv"
 	"strings"
 	"time"
@@ -18,6 +18,7 @@ type TaskController struct {
 // 任务列表
 func (this *TaskController) List() {
 	page, _ := this.GetInt("page")
+	keyword := this.GetString("keyword", "")
 	if page < 1 {
 		page = 1
 	}
@@ -26,6 +27,8 @@ func (this *TaskController) List() {
 	if groupId > 0 {
 		filters = append(filters, "group_id", groupId)
 	}
+
+	models.Keyword = keyword
 	result, count := models.TaskGetList(page, this.pageSize, filters...)
 
 	list := make([]map[string]interface{}, len(result))
@@ -66,6 +69,7 @@ func (this *TaskController) List() {
 	this.Data["list"] = list
 	this.Data["groups"] = groups
 	this.Data["groupid"] = groupId
+	this.Data["keyword"] = keyword
 	this.Data["pageBar"] = libs.NewPager(page, int(count), this.pageSize, beego.URLFor("TaskController.List", "groupid", groupId), true).ToString()
 	this.display()
 }

@@ -8,7 +8,7 @@ import (
 
 const (
 	TASK_SUCCESS = 0  // 任务执行成功
-	TASK_ERROR   = -1 // 任务执行出错
+	TASK_ERROR = -1 // 任务执行出错
 	TASK_TIMEOUT = -2 // 任务执行超时
 )
 
@@ -30,6 +30,10 @@ type Task struct {
 	PrevTime     int64
 	CreateTime   int64
 }
+
+var (
+	Keyword string
+)
 
 func (t *Task) TableName() string {
 	return TableName("task")
@@ -64,12 +68,22 @@ func TaskGetList(page, pageSize int, filters ...interface{}) ([]*Task, int64) {
 	tasks := make([]*Task, 0)
 
 	query := orm.NewOrm().QueryTable(TableName("task"))
+
+	cond := orm.NewCondition()
+	//if Keyword != "" {
+	cond1 := cond.And("task_name__icontains", Keyword).Or("command__icontains", Keyword)
+	query = query.SetCond(cond1)
+	//}
+
 	if len(filters) > 0 {
-		l := len(filters)
-		for k := 0; k < l; k += 2 {
-			query = query.Filter(filters[k].(string), filters[k+1])
-		}
+		//l := len(filters)
+		//for k := 0; k < l; k += 2 {
+		//	query = query.Filter(filters[k].(string), filters[k + 1])
+		//}
+		cond2 := cond.AndCond(cond1).AndCond(cond.And(filters[0].(string), filters[1]))
+		query = query.SetCond(cond2)
 	}
+
 	total, _ := query.Count()
 	query.OrderBy("-id").Limit(pageSize, offset).All(&tasks)
 
