@@ -1,4 +1,5 @@
 bin/
 *.tar.gz
 .idea/
-app.conf
+conf/
+webcron.*
