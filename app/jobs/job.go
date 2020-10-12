@@ -3,14 +3,16 @@ package jobs
 import (
 	"bytes"
 	"fmt"
-	"github.com/astaxie/beego"
-	"webcron/app/mail"
-	"webcron/app/models"
 	"html/template"
 	"os/exec"
 	"runtime/debug"
 	"strings"
 	"time"
+	"webcron/app/libs"
+	"webcron/app/mail"
+	"webcron/app/models"
+
+	"github.com/astaxie/beego"
 )
 
 var mailTpl *template.Template
@@ -67,7 +69,7 @@ func NewCommandJob(id int, name string, command string) *Job {
 	job.runFunc = func(timeout time.Duration) (string, string, error, bool) {
 		bufOut := new(bytes.Buffer)
 		bufErr := new(bytes.Buffer)
-		cmd := exec.Command("/bin/bash", "-c", command)
+		cmd := exec.Command("cmd", "/C", command)
 		cmd.Stdout = bufOut
 		cmd.Stderr = bufErr
 		cmd.Start()
@@ -133,8 +135,8 @@ func (j *Job) Run() {
 	// 插入日志
 	log := new(models.TaskLog)
 	log.TaskId = j.id
-	log.Output = cmdOut
-	log.Error = cmdErr
+	log.Output = libs.ConvertUtf8(cmdOut)
+	log.Error = libs.ConvertUtf8(cmdErr)
 	log.ProcessTime = int(ut)
 	log.CreateTime = t.Unix()
 

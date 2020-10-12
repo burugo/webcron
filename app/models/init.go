@@ -1,10 +1,11 @@
 package models
 
 import (
+	"net/url"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
-	"net/url"
 )
 
 func Init() {
@@ -17,7 +18,7 @@ func Init() {
 	if dbport == "" {
 		dbport = "3306"
 	}
-	dsn := dbuser + ":" + dbpassword + "@tcp(" + dbhost + ":" + dbport + ")/" + dbname + "?charset=utf8"
+	dsn := dbuser + ":" + dbpassword + "@tcp(" + dbhost + ":" + dbport + ")/" + dbname + "?charset=utf8mb4"
 	if timezone != "" {
 		dsn = dsn + "&loc=" + url.QueryEscape(timezone)
 	}

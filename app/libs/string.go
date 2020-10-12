@@ -4,6 +4,9 @@ import (
 	"crypto/md5"
 	"fmt"
 	"regexp"
+	"unicode/utf8"
+
+	"github.com/axgle/mahonia"
 )
 
 var emailPattern = regexp.MustCompile("[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[a-zA-Z0-9](?:[\\w-]*[\\w])?")
@@ -27,4 +30,12 @@ func SizeFormat(size float64) string {
 
 func IsEmail(b []byte) bool {
 	return emailPattern.Match(b)
+}
+
+func ConvertUtf8(str string) string {
+	if !utf8.ValidString(str) {
+		utf8Encoder := mahonia.NewEncoder("UTF-8")
+		return utf8Encoder.ConvertString(str)
+	}
+	return str
 }
