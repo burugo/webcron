@@ -32,10 +32,11 @@ func IsEmail(b []byte) bool {
 	return emailPattern.Match(b)
 }
 
+//ConvertUtf8 gbk 解码
 func ConvertUtf8(str string) string {
 	if !utf8.ValidString(str) {
-		utf8Encoder := mahonia.NewEncoder("UTF-8")
-		return utf8Encoder.ConvertString(str)
+		utf8Decoder := mahonia.NewDecoder("gbk")
+		return utf8Decoder.ConvertString(str)
 	}
 	return str
 }
