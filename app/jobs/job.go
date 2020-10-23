@@ -129,14 +129,15 @@ func (j *Job) Run() {
 	}
 
 	cmdOut, cmdErr, err, isTimeout := j.runFunc(timeout)
-
+	cmdOut = libs.ConvertUtf8(cmdOut)
+	cmdErr = libs.ConvertUtf8(cmdErr)
 	ut := time.Now().Sub(t) / time.Millisecond
 
 	// 插入日志
 	log := new(models.TaskLog)
 	log.TaskId = j.id
-	log.Output = libs.ConvertUtf8(cmdOut)
-	log.Error = libs.ConvertUtf8(cmdErr)
+	log.Output = cmdOut
+	log.Error = cmdErr
 	log.ProcessTime = int(ut)
 	log.CreateTime = t.Unix()
 
