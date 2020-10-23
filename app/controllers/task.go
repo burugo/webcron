@@ -1,14 +1,15 @@
 package controllers
 
 import (
-	"github.com/astaxie/beego"
-	libcron "github.com/lisijie/cron"
-	"webcron/app/jobs"
-	"webcron/app/libs"
-	"webcron/app/models"
 	"strconv"
 	"strings"
 	"time"
+	"webcron/app/jobs"
+	"webcron/app/libs"
+	"webcron/app/models"
+
+	"github.com/astaxie/beego"
+	libcron "github.com/lisijie/cron"
 )
 
 type TaskController struct {
@@ -156,6 +157,8 @@ func (this *TaskController) Edit() {
 				}
 			}
 			task.NotifyEmail = strings.Join(emailList, "\n")
+		} else {
+			task.NotifyEmail = ""
 		}
 
 		if task.TaskName == "" || task.CronSpec == "" || task.Command == "" {
